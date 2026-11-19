@@ -2,11 +2,14 @@
 import { useEffect, useState } from 'react'
 import CadastrarEquipamentos from './CadastrarEquipamentos'
 import ListaEquipamentos from './ListaEquipamentos'
+import EditarEquipamento from './EditarEquipamento'
+import { apiGet, apiDelete } from './api'
 
 export default function BuscarEquipamentos() {
   const [equipamentos, setEquipamentos] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
+const [editando, setEditando] = useState(null)  
 
   useEffect(() => {
     const controle = new AbortController()  // cria um controle
@@ -16,10 +19,9 @@ export default function BuscarEquipamentos() {
       try {
         setCarregando(true)
         setErro(null)
-        const resp = await fetch('https://jsonplaceholder.typicode.com/posts', { signal })
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
-        const data = await resp.json()
-        setEquipamentos(data)
+const data = await apiGet('/posts', { signal })
+setEquipamentos(data)
+
       } catch (e) {
         if (e.name !== 'AbortError') {
           // Ignora AbortError: é quando nós mesmos cancelamos
@@ -58,9 +60,9 @@ export default function BuscarEquipamentos() {
   }
 
   // Prepara o equipamento para edição
-  function editarEquipamento(equipamento) {
-    console.log('Editar equipamento:', equipamento)
-  }
+ function editarEquipamento(equipamento) {
+  setEditando(equipamento)
+}
 
   if (carregando) return <p>Carregando...</p>
   if (erro) return <p>Erro: {erro}</p>
