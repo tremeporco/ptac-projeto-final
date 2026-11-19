@@ -1,7 +1,9 @@
 
 import { useEffect, useState } from 'react'
+import CadastrarEquipamentos from './CadastrarEquipamentos'
+import ListaEquipamentos from './ListaEquipamentos'
 
-export default function BuscarUsuario() {
+export default function BuscarEquipamentos() {
   const [equipamentos, setEquipamentos] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
@@ -34,15 +36,45 @@ export default function BuscarUsuario() {
     return () => controle.abort()
   }, [])
 
+  // Adiciona o equipamento criado à lista sem fazer outro GET
+  function adicionarEquipamento(novoEquipamento) {
+    setEquipamentos(prev => [...prev, novoEquipamento])
+  }
+
+  // Exclui o equipamento pelo id
+  async function excluirEquipamento(id) {
+    try {
+      const resp = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+
+      // Remove o equipamento da lista usando filter
+      setEquipamentos(prev => prev.filter(e => e.id !== id))
+    } catch (e) {
+      setErro(e.message)
+    }
+  }
+
+  // Prepara o equipamento para edição
+  function editarEquipamento(equipamento) {
+    console.log('Editar equipamento:', equipamento)
+  }
+
   if (carregando) return <p>Carregando...</p>
   if (erro) return <p>Erro: {erro}</p>
   if (equipamentos.length === 0) return <p>Nenhum equipamento encontrado.</p>
 
   return (
-    <ul>
-      {equipamentos.map(e => (
-        <li key={e.id}>{e.title}</li>
-      ))}
-    </ul>
+    <>
+      <CadastrarEquipamentos onCriado={adicionarEquipamento} />
+
+      <ListaEquipamentos
+        equipamentos={equipamentos}
+        onEditar={editarEquipamento}
+        onExcluir={excluirEquipamento}
+      />
+    </>
   )
 }
