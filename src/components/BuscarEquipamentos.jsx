@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from 'react'
 
-function ListaUsuarios() {
-  const [usuarios, setUsuarios] = useState([])
+export default function BuscarUsuario() {
+  const [equipamentos, setEquipamentos] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
 
@@ -13,10 +14,10 @@ function ListaUsuarios() {
       try {
         setCarregando(true)
         setErro(null)
-        const resp = await fetch('https://jsonplaceholder.typicode.com/users', { signal })
+        const resp = await fetch('https://jsonplaceholder.typicode.com/posts', { signal })
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
         const data = await resp.json()
-        setUsuarios(data)
+        setEquipamentos(data)
       } catch (e) {
         if (e.name !== 'AbortError') {
           // Ignora AbortError: é quando nós mesmos cancelamos
@@ -34,13 +35,13 @@ function ListaUsuarios() {
   }, [])
 
   if (carregando) return <p>Carregando...</p>
-  if (erro)     return <p>Erro: {erro}</p>
-  if (usuarios.length === 0) return <p>Nenhum usuário encontrado.</p>
+  if (erro) return <p>Erro: {erro}</p>
+  if (equipamentos.length === 0) return <p>Nenhum equipamento encontrado.</p>
 
   return (
     <ul>
-      {usuarios.map(u => (
-        <li key={u.id}>{u.name}</li>
+      {equipamentos.map(e => (
+        <li key={e.id}>{e.title}</li>
       ))}
     </ul>
   )
