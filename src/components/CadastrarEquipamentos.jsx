@@ -1,7 +1,8 @@
 
 import { useState } from 'react'
-
-function CadastrarEquipamentos() {
+import { apiPost } from '../api'
+import { validarEquipamento } from '../utils/validarEquipamento'
+function CadastrarEquipamentos({ onCriado }) {
   const [nome, setNome] = useState('')
   const [preco, setPreco] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -21,13 +22,13 @@ function CadastrarEquipamentos() {
     }
 
     try {
-      const resp = await fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: nome, body: preco }),
-      })
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
-      const data = await resp.json()
+      validarEquipamento(nome, preco)
+  const data = await apiPost('/posts', {
+  title: nome,
+  body: preco,
+  
+})
+      onCriado(data) 
       setCriado(data)        // mostra o recurso criado
       setNome('')            // limpa o formulario
       setPreco('')

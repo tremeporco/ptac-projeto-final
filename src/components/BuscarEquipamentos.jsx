@@ -3,13 +3,16 @@ import { useEffect, useState } from 'react'
 import CadastrarEquipamentos from './CadastrarEquipamentos'
 import ListaEquipamentos from './ListaEquipamentos'
 import EditarEquipamento from './EditarEquipamento'
-import { apiGet, apiDelete } from './api'
+import { apiGet, apiDelete } from '../api' 
+import { filtrarEquipamentos } from '../utils/filtrarEquipamentos'
 
 export default function BuscarEquipamentos() {
   const [equipamentos, setEquipamentos] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
 const [editando, setEditando] = useState(null)  
+const [busca, setBusca] = useState('')
+const [filtro, setFiltro] = useState('')
 
   useEffect(() => {
     const controle = new AbortController()  // cria um controle
@@ -46,11 +49,7 @@ setEquipamentos(data)
   // Exclui o equipamento pelo id
   async function excluirEquipamento(id) {
     try {
-      const resp = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+ await apiDelete(`/posts/${id}`)
 
       // Remove o equipamento da lista usando filter
       setEquipamentos(prev => prev.filter(e => e.id !== id))
@@ -66,17 +65,56 @@ setEquipamentos(data)
 
   if (carregando) return <p>Carregando...</p>
   if (erro) return <p>Erro: {erro}</p>
-  if (equipamentos.length === 0) return <p>Nenhum equipamento encontrado.</p>
 
-  return (
-    <>
-      <CadastrarEquipamentos onCriado={adicionarEquipamento} />
+const equipamentosFiltrados = filtrarEquipamentos(equipamentos, filtro)
+ return (
+  <>
+    <CadastrarEquipamentos onCriado={adicionarEquipamento} />
 
-      <ListaEquipamentos
-        equipamentos={equipamentos}
-        onEditar={editarEquipamento}
-        onExcluir={excluirEquipamento}
+<div>
+  <input
+    type="text"
+    placeholder="Buscar equipamento pelo nome"
+    value={busca}
+    onChange={(e) => setBusca(e.target.value)}
+  />
+
+  <button onClick={() => setFiltro(busca)}>
+    Buscar
+  </button>
+
+  <button onClick={() => {
+    setBusca('')
+    setFiltro('')
+  }}>
+    Limpar
+  </button>
+</div>
+
+    {editando && (
+      <EditarEquipamento
+        equipamento={editando}
+        onSalvar={(equipamentoAtualizado) => {
+          // Atualiza o equipamento na lista usando map
+          setEquipamentos(prev => prev.map(e =>
+            e.id === equipamentoAtualizado.id ? equipamentoAtualizado : e
+          ))
+          setEditando(null)
+        }}
+        onCancelar={() => setEditando(null)}
       />
-    </>
-  )
+    )}
+
+{equipamentosFiltrados.length === 0 ? (
+  <p>Nenhum equipamento encontrado.</p>
+) : (
+  <ListaEquipamentos
+    equipamentos={equipamentosFiltrados}
+    onEditar={editarEquipamento}
+    onExcluir={excluirEquipamento}
+  />
+)}
+  </>
+)
 }
+

@@ -1,16 +1,56 @@
-# React + Vite
+# Catálogo de Equipamentos Médicos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Integrantes
+- Eduardo Silva Passarelo
+- Yasmin Vitória da Silva Prestes
 
-Currently, two official plugins are available:
+## Sobre o projeto
+Sistema para cadastrar, listar, editar, excluir e pesquisar equipamentos médicos para aluguel, como cadeiras de rodas, muletas e andadores.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologias
+- React e Vite
+- JavaScript e CSS
+- Fetch API
+- Vitest e React Testing Library
 
-## React Compiler
+## API utilizada
+ JSONPlaceholder, por ser uma alternativa temporária por termos feito separado com de Ptas, na qual eu deveria ter conectado.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Base URL: https://jsonplaceholder.typicode.com
+a que usamos em aula só para cumprir os requisitos até eu ligar com o Backend
 
-## Expanding the ESLint configuration
+| Método | Rota | Função |
+|---|---|---|
+| GET | /posts | Listar |
+| POST | /posts | Cadastrar |
+| PUT | /posts/:id | Editar |
+| DELETE | /posts/:id | Excluir |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Campos:** `id` (identificador), `title` (nome) e `body` (preço).
+
+### Exemplo de resposta JSON
+{
+  "userId": 1,
+  "id": 1,
+  "title": "cadeira de rodas",
+  "body": "preço de 20 R$ por semana"
+}
+ a Api consome os dados como pedido, mas não permance
+
+## MongoDB e SQL
+No Mongo os dados são guardados em documentos. Cada documento possui um identificador `_id`,  com 24 caracteres hexadecimais.já a JSONPlaceholder utiliza IDs numéricos, tipo 1, 2 , 3...
+
+## Como executar
+npm install
+npm run dev
+
+Para testes:
+npm test
+
+Para gerar a versão de produção:
+npm run build
+
+
+## Testes
+Fizemos 7 testes com Vitest e RTL, verificando a busca, a validação e os componentes da aplicação.
+
